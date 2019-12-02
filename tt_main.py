@@ -5,6 +5,13 @@ import pickle
 #################################################################################################
 # User parameters:
 
+# !!! Set this so that authentication knows who you are !!!
+SALuser = ''
+
+
+#################################################################################################
+# Shot parameters:
+
 # Desired time. Script will automatically find the data with the nearest time to the desired time.
 t_choice = 48.0
 
@@ -23,6 +30,10 @@ uid = 'mroma'
 # Sequence number. If -1, then the most recent one will be chosen. 
 seq = -1
 
+
+#################################################################################################
+# Other customization.
+
 # If True we should interpolate between the nearest data points in time/radius.
 interpolateTChoice = True
 interpolateRChoice = True
@@ -31,8 +42,8 @@ interpolateRChoice = True
 writeSurfFile = 'tt_surface.dat'
 
 # If specified, we read the surface data from a file.
-readSurfFile = writeSurfFile
-#readSurfFile = ''
+readSurfFile = ''
+#readSurfFile = writeSurfFile
 
 # If true, plots figures.
 with_plot = True
@@ -40,14 +51,14 @@ with_plot = True
 # If true, plots radial profiles AFTER normalization. Otherwise plots them with units.
 plot_normalized = True
 
-# Template input file name.
+# Template input file name. !!! This needs to be set on a per-user/system basis !!!
 input_template = '/home/beekel/scripts/toktools/example.in'
 
 ################################################################################################
 
 if readSurfFile == '':
     # Read the profile data from the relevant source.
-    surface = tt_surface.surfobj(source=source, shot=shot, uid = uid, seq=seq, t_choice=t_choice, interpolate = interpolateTChoice)
+    surface = tt_surface.surfobj(source=source, shot=shot, uid = uid, seq=seq, t_choice=t_choice, interpolate = interpolateTChoice, SALuser = SALuser)
 else:
     print("Reading surface data from local file {}...".format(readSurfFile))
     with open(readSurfFile, 'rb') as read_file:
