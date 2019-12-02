@@ -193,12 +193,25 @@ class surfobj:
     # r choice is the normalized radius choice.
     def choose_radius(self, r_choice, interpolate):
         self.r_choice = r_choice
+
+        # Now find the x-dimension value that corresponds to r_choice.
+        xDat = self.oned['minrad'].signal.dimensions[0].data
+        rDat = self.oned['minrad'].data
+        i = int((np.abs(rDat-r_choice)).argmin())
+        if rDat[i] < r_choice and i + 1 < len(xDat):
+            i1 = i
+            i2 = i+1
+        elif rDat[i] > r_choice and i != 0:
+            i1 = i-1
+            i2 = i
+        m = (xDat[i2]-xDat[i1]) / (rDat[i2]-rDat[i1])
+        c = xDat[i1] - m*rDat[i1]
+        x_choice = m*r_choice + c
+        
         for key in list(self.oned):
             item = self.oned[key]
-            #print(item.tag + ": " + str(type(item)))
-            self.zerod[item.tag] = item.reduce_dim(r_choice, interpolate)
+            self.zerod[item.tag] = item.reduce_dim(x_choice, interpolate)
             del self.oned[item.tag]
-            
 
     def get_gradients(self):
         # First, we get the rate of change the arbitrary x-vector with rminor: dx/dr. 
