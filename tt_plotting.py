@@ -44,7 +44,7 @@ def merge_pdfs(in_namelist, out_name):
 
     # Remove constituent PDFs
     for pdfname in in_namelist:
-        os.system('rm -f '+file_name)
+        os.system('rm -f '+pdfname)
 
     plt.cla()
     plt.clf()
