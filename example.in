@@ -1,0 +1,237 @@
+&theta_grid_knobs
+equilibrium_option='eik' ! local (miller) or numerical equil. (depending on iflux)
+/
+
+&theta_grid_parameters
+  rhoc              = 0.32794000    ! normalized radius at which GS2 is run
+  rmaj              = 3.1387976     ! R at the center of this flux surface (in units of a)
+  r_geo             = 3.0010499     ! R where B_T is specified in (R_geo also in units of a)
+  qinp              = 1.40024       ! safety factor q
+  shat              = -0.26015182   ! shear																!
+  shift             = -0.17729422   ! Shafranov shift gradient dRmaj/drho (Rmaj normed to a)
+  akappa            = 1.39954       ! Elongation kappa
+  akappri           = -0.32998100   ! dkappa/drho  (rho should be half diameter)
+  tri               = 0.0409349     ! triangularity tri = asin[(R(max(Z))-R_major)/r_mid]              
+  tripri            = 0.39426930    ! d(tri)/drho
+
+
+ ntheta= 32   ! # of theta grid points per 2*pi (needs to be even)
+ nperiod= 3   ! # of 2*pi cells = 2*nperiod-1
+/
+
+!#########################################################################
+&parameters
+  beta              = 0.022743213   ! Always needed since B_T0 is defined through beta
+  zeff              = 3.9999997    																	! 
+ /
+
+&collisions_knobs
+ collision_model='default'  ! Lorentz collision operator
+ use_le_layout = .true.
+/
+
+!#########################################################################
+&theta_grid_eik_knobs     ! Only read if equilibrium_option='eik'
+
+ itor = 1   ! =1 only working option of relevance
+ iflux = 0  ! =0 to use Miller/local equilibrium.
+
+ irho              = 2             ! rho = sqrt(Phi_tor/Phi_tor_edge)
+ ! Options for various types of equilibrium
+ local_eq = .true.  ! .true. required when iflux=0 for Miller equilibrium
+                    ! local_eq and iflux=0 a little redundant
+
+ equal_arc = .true.  ! equal poloidal arc lengths, same as NCLASS choice
+                     ! =.true. usually best choice
+
+ ! See geometry.f90 for defns of bishop parameter.
+ bishop = 4 ! use Bishop relations with s_hat_input and beta_prime_input
+  s_hat_input              = -0.26015182   ! shear																!
+  beta_prime_input  = -0.17714670   ! total dbeta/drho used in equilibrium.
+
+ delrho = 1.e-3  ! step size for radial derivatives. 1.e-5 good except
+ isym = 1  ! 0 allows up-down asymmetry, 1 to symmetrize up-down equilibrium
+ writelots = .false.
+/ 
+
+&fields_knobs
+ field_option='implicit'
+/
+
+&gs2_diagnostics_knobs
+ print_line=.true.  ! to terminal
+ write_line=.false.  ! to file
+ write_omega=.true.  ! complex omega
+ write_omavg=.false.  ! time-averaged omega
+ write_eigenfunc=.true.  ! write normalized eigenfunctions phi(theta)
+ write_final_fields=.true.
+ dump_check1=.false.   ! .true. to write some zonal flow diagnostics
+ nwrite=           50  ! # of time steps between writing
+ navg=          20     ! printed value averaged over 'navg' steps
+ omegatol= -1.0e-4     ! run till omega(t) doesn't vary much
+ omegatinst = 500.0    ! give up if omega > omegatinst (numerical instability?)
+ save_for_restart=.false. ! Write restart files
+/
+
+!#########################################################################
+&le_grids_knobs
+ ngauss=5  ! # of passing pitch angles. ngauss=1-6, 8, 10,12, 16, 20, 24, 32,
+ 	    ! 40, 48
+            ! # of trapped particle pitch angles = ntheta/2, except when rec.
+	    ! eq. used, in this case the choice depends on the grid for 
+	    ! B(theta) optimized in rungridgen
+	    ! default value: 5
+ negrid=16  ! # of energy grid points.  negrid = 3-12, 14, or 18.
+ vcut=   3.0         ! High v cut-off in energy grid
+
+/
+&dist_fn_knobs
+ gridfac=   1.0    ! no reason to change this.
+                   ! fields at theta boundary reduced by 1/gridfac hack
+ apfac=   1.000000     ! related to delta B_par ?
+ driftknob=   1.0000000
+/
+
+&init_g_knobs   ! "g" refers to non-adiabatic part of distribution function 
+ ginit_option= "noise"
+ phiinit=   1.e-3     ! initial amplitude
+
+ ! If ginit_option="default", then the next 3 parameters are used:
+ width0=   3.00000    ! initial width in theta of g
+ chop_side = .false.  ! initialize even parity only
+ ! chop_side = .true.   ! initialize even and odd parities
+
+/
+
+&kt_grids_knobs
+ grid_option='range'
+/
+
+! No flow shear, so can use range.
+&kt_grids_range_parameters 
+ naky=100
+ ntheta0=1    
+ aky_min=0.1
+ aky_max=10.0
+ theta0_min=0.0
+ theta0_max=0.0 
+/
+
+&kt_grids_box_parameters
+/
+&kt_grids_single_parameters
+/ 
+&kt_grids_specified_parameters
+/ 
+&kt_grids_specified_element_1
+/
+&kt_grids_specified_element_2
+/
+
+&knobs
+ fphi=   1.000000     ! multiplier on electrostatic potential phi.
+ fapar=  0.000000    ! 1 to keep A_par, 0 for electrostatic runs
+ fbpar=  0.000000    ! 1 to keep A_perp (delta B_par), 0 for electrostatic
+
+ delt=0.05  ! time_step in code is delt*a/v_t/sqrt(2) in NL norm
+
+ nstep=        10000  ! # of time steps to take
+ avail_cpu_time=86400 ! seconds of cpu time available. If reached then stop gs2 gracefully
+ wstar_units = .false.  ! frequency normalized to v_t/a = sqrt(T_ref/m_ref)/a
+/
+
+!#########################################################################
+!
+! Multiple species definitions
+!
+!#########################################################################
+
+! n.b. Radial quasineutrality should satisfy (show by Taylor expansion around flux-surface center)
+!          sum_s z dens fprim = 0 
+
+&species_knobs
+  nspec             = 3             ! GKGET Fri May 11 13:22:08 2018 number of species
+/
+&species_parameters_1                                                 
+ z =       1.000000
+ mass =    1.000000e+00
+ dens =    4.000000e-01
+ temp =    1.000000e+00
+ tprim =   8.955539e+00
+ fprim =   1.539469e+00
+ uprim =   0.000000e+00
+ vnewk =   1.832879e-04
+ type =  'ion'
+/
+
+&species_parameters_2                                              
+ z =      -1.000000
+ mass =    2.742900e-04
+ dens =    1.000000e+00
+ temp =    7.008960e-01
+ tprim =   2.086584e+00
+ fprim =   1.539472e+00
+ uprim =   0.000000e+00
+ vnewk =   3.421224e-03
+ type =  'electron'
+/
+
+&species_parameters_3
+ z =       6.000000
+ mass =    6.000000e+00
+ dens =    9.999999e-02
+ temp =    1.000000e+00
+ tprim =   8.955539e+00
+ fprim =   1.539469e+00
+ uprim =   0.000000e+00
+ vnewk =   1.872449e-03
+ type =  'ion'
+/
+
+&dist_fn_species_knobs_1
+ fexpr= 0.4500000      ! 0 = fully implicit, 0.5 = standard centered implicit
+ fexpi= 0.0000000E+00  ! Imaginary part of implicit parameter, always =0
+ bakdif=  0.0500E+00   ! upwind parameter (=0 for 2cd order method in KRT) >0&<1
+ 		       ! SAFER to switch it to 0.05. Especially when converged
+		       ! omega but weird eigenfunction. If up-dowm asymetry
+		       ! allowed then 0.3 better.
+/
+&dist_fn_species_knobs_2
+ fexpr= 0.4500000
+ fexpi= 0.0000000E+00
+ bakdif=  0.0500E+00
+/
+&dist_fn_species_knobs_3
+ fexpr= 0.4500000
+ fexpi= 0.0000000E+00
+ bakdif=  0.0500E+00
+/
+
+&theta_grid_file_knobs
+/
+&theta_grid_gridgen_knobs
+ npadd = 0
+ alknob = 0.0
+ epsknob = 1.e-5
+ extrknob = 0.0
+ tension = 1.0
+ thetamax = 0.0
+ deltaw = 0.0
+ widthw = 1.0
+/
+&source_knobs
+/
+&nonlinear_terms_knobs
+nonlinear_mode='off'
+/
+&additional_linear_terms_knobs
+/
+&reinit_knobs
+/
+&theta_grid_salpha_knobs  ! empty namelist needed for s-alpha to work
+/
+&layouts_knobs
+ layout = 'xyles'
+ local_field_solve = F
+/
+
