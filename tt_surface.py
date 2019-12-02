@@ -13,8 +13,10 @@ import f90nml
 
 class surfobj:
 
-    def __init__( self, source, shot, uid, seq, t_choice, interpolate = False):
-        sal.authenticate('obeeke')   # Enter your username as the argument here, or leave no argument if you want to enter your username every time. 
+    def __init__( self, source, shot, uid, seq, t_choice, interpolate = False, SALuser = ''):
+        if SALuser == '':
+            print('  !!! You can set your remote access username via SALuser, in tt_main.py !!!')
+        sal.authenticate(SALuser)   # Enter your username as the argument here, or leave no argument if you want to enter your username every time. 
         self.shot = shot
         self.uid = uid
         self.t_choice = t_choice
@@ -382,7 +384,6 @@ class surfobj:
         plt.savefig(tmp_pdfname)
         pdflist.append(tmp_pdfname)
         tmp_pdf_id = tmp_pdf_id+1
-        plt.show()
 
         # Elongation and triangularity profiles. 
         fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize=(16,12), sharex=True)
@@ -397,7 +398,6 @@ class surfobj:
         plt.savefig(tmp_pdfname)
         pdflist.append(tmp_pdfname)
         tmp_pdf_id = tmp_pdf_id+1
-        plt.show()
         
         # Major radius, Shafranov Shift and Pressure. 
         fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize=(16,12), sharex=True)
