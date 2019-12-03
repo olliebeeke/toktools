@@ -509,7 +509,7 @@ class surfobj:
                         temp = 'temp_i'
                     patch_namelist['species_parameters_{}'.format(species_counter)] = {
                     'z'     :float(fs.format(round(self.zerod['z_{}'.format(spec)].data[0],dp))),
-                    'mass'  :float(fs.format(round(self.zerod['mass_{}'.format(spec)].data[0],dp))),
+                    'mass'  :float(fs.format(self.zerod['mass_{}'.format(spec)].data[0],dp)),
                     'dens'  :float(fs.format(round(self.zerod['dens_{}'.format(spec)].data[0],dp))),
                     'fprim' :float(fs.format(round(self.zerod['fprim_{}'.format(spec)].data[0],dp))),
                     'temp'  :float(fs.format(round(self.zerod[temp].data[0],dp))),
