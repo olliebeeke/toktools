@@ -519,7 +519,7 @@ class surfobj:
                     }
                     species_counter = species_counter + 1
             
-            patch_namelist['species_knobs'] = {
+            patch_namelist['dist_fn_knobs'] = {
             'g_exb' :float(fs.format(round(self.zerod['g_exb'].data[0],dp))),
             'mach' :float(fs.format(round(self.zerod['tor_angv'].data[0],dp)))
             }                    
