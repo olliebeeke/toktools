@@ -356,7 +356,7 @@ class surfobj:
         self.get_species_labels()
 
         pdflist = []
-        merged_pdfname = '{}_{}_{}_{}_profiles.pdf'.format(self.shot, self.uid, self.seq, self.t_choice)
+        merged_pdfname = 'profiles_{}_{}_{}_{}.pdf'.format(self.shot, self.uid, self.seq, self.t_choice)
         tmp_pdf_id = 1
         
         xlab = '{} {}'.format(self.oned['minrad'].sym, self.oned['minrad'].units)
