@@ -314,6 +314,15 @@ class surfobj:
         betaRef = nref*Tref*4.0268e-25/(Bref*Bref)
         self.zerod['beta_ref'] = tt_structs.zerod_item(cp(self.zerod['amin'].signal), [betaRef], 'beta_ref', description='Normalizing beta', units ='', sym = r'$\beta_{\rm{ref}}$')
 
+        # Print out normalizing quantities to terminal.
+        print("Normalizing temperature is {:1.4f} {}".format(Tref, self.zerod['T_ref'].units))
+        print("Normalizing velocity is {:1.4f} {}".format(vref, self.zerod['v_ref'].units))
+        print("Normalizing density is {:1.4f} {}".format(nref, self.zerod['n_ref'].units))
+        print("Normalizing magnetic field is {:1.4f} {}".format(Bref, '[T]'))
+        print("Normalizing beta is {:1.4f}".format(betaRef))
+        print("Normalizing mass is {:1.4f} {}".format(mref, self.zerod['m_ref'].units))
+        print("Normalizing length is {:1.4f} {}".format(Lref, '[m]'))
+
         # Normalize length scales like minrad, majrad, rgeo.
         self.oned['minrad'].normalize(Lref, r'$\frac{r}{ a_{\rm{min}} }$')
         self.oned['majrad'].normalize(Lref, r'$\frac{R_0}{ a_{\rm{min}} }$')
